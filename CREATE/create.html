@@ -1,11 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-    <title>Example</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- CSS 를 Import 합니다. -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
+  </script>
+  <!-- JQuery를 import 합니다 -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+
+  <title>Create</title>
 </head>
+
+<script>
+  function q1() {
+
+  }
+</script>
+
+
+
 <body>
   <div class="container is-max-desktop">
     <div class="notification is-Light">
@@ -13,79 +33,85 @@
       <div class="box">
         <nav class="navbar" role="navigation" aria-label="main navigation">
 
-        <div class="navbar-brand">
-          <a class="navbar-item" href="http://127.0.0.1:5500/1.html">
-            <img src="https://jungle.krafton.com/resource/images/common/logo.svg" sizes="200%">
-          </a>
-        </div>
-      
-                <div class="navbar-end">
+          <div class="navbar-start">
+            <a class="navbar-item" href="http://127.0.0.1:5500/1.html">
+              <img src="https://jungle.krafton.com/resource/images/common/logo.svg" sizes="400%">
+            </a>
+          </div>
+          <div class="navbar-end">
             <div class="navbar-item">
               <div class="buttons">
-
                 <a class="button is-light">
                   Logout
                 </a>
               </div>
             </div>
           </div>
-          </nav>
-        </div>
+        </nav>
+      </div>
+      <div class="box">
+        <h3 class="title is-3">추가 하고 싶은 문제를 추가하세요</h3>
+      </div>
+
+      <div class="box">
+        <div class="columns is-mobile">
+          <div class="column is-one-flex justifiy-content-center">
+            <p class="title is-size-3 is-spaced">Game category : </p>
+          </div>
+          <div class="column">
+            <!-- Dropbox에 대한 코드 -->
+            <div class="dropdown is-hoverable">
+              <div class="dropdown-trigger">
+                <button class="button" aria-haspopup="true" aria-controls="dropdown-menu3">
+                  <span>Game List</span>
+                  <span class="icon is-small">
+                    <span class="mdi mdi-chevron-down">
+                      <i class="fas fa-angle-down" aria-hidden="true"></i>
+                    </span>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
 
 
-    <div class="box">
-      
-      <h3 class="title is-3">추가 하고 싶은 문제를 추가하세요</h3>
-    </div>
-    <div class="box">
-      <div class="dropdown">
-        <div class="dropdown-trigger">
-          <button class="button" aria-haspopup="true" aria-controls="dropdown-menu3">
-            <span>Click me</span>
-            <span class="icon is-small">
-              <i class="fas fa-angle-down" aria-hidden="true"></i>
-            </span>
-          </button>
-        </div>
-        <div class="dropdown-menu" id="dropdown-menu3" role="menu">
-          <div class="dropdown-content">
-            <a href="#" class="dropdown-item">
-              Overview
-            </a>
-            <a href="#" class="dropdown-item">
-              Modifiers
-            </a>
-            <a href="#" class="dropdown-item">
-              Grid
-            </a>
-            <a href="#" class="dropdown-item">
-              Form
-            </a>
-            <a href="#" class="dropdown-item">
-              Elements
-            </a>
-            <a href="#" class="dropdown-item">
-              Components
-            </a>
-            <a href="#" class="dropdown-item">
-              Layout
-            </a>
-            <hr class="dropdown-divider">
-            <a href="#" class="dropdown-item">
-              More
-            </a>
+          <!-- 클릭시 나오는 Dropdown -->
+
+          <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+
+            <div class="dropdown-content">
+              <a href="#" class="dropdown-item">
+                게임 1
+              </a>
+              <a class="dropdown-item">
+                게임 2
+              </a>
+              <a href="#" class="dropdown-item is-active">
+                게임 3
+              </a>
+              <a href="#" class="dropdown-item">
+                게임 4
+              </a>
+              <hr class="dropdown-divider">
+              <a href="#" class="dropdown-item">
+                With a divider
+              </a>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="field">
-        <div class="control">
-          <textarea class="textarea is-large" placeholder="문제를 입력하시오"></textarea>
-        </div>
-      </div>
-      <input class="input is-large" type="text" placeholder="답을 입력하시오">
-    </div>
+        <hr>
 
+        <div class="field">
+          <div class="control">
+            <textarea class="textarea is-large" placeholder="문제를 입력하시오"></textarea>
+          </div>
+        </div>
+        <input class="input is-large" type="text" placeholder="답을 입력하시오">
       </div>
     </div>
-  </body>
+  </div>
+
+
+</body>
+
 </html>
