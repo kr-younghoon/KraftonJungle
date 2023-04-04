@@ -1,0 +1,48 @@
+{% extends "base.html"  %}
+{% block content %}
+    <div class = "box">
+        <div class="block">
+            <label class="title is-1 mg-large" >회원가입</label>
+          </div>
+
+        <div class="block">
+            <div class="control has-icons-left">
+              <input class="input is-medium" type="text" style="width: 500px;" placeholder="ID">
+              <span class="icon is-medium is-left">
+                <span class="mdi mdi-identifier"></span>
+              </span>
+            </div>
+        </div>
+
+        <div class="block">
+            <div class="control has-icons-left">    
+                <input class="input is-medium" type="text" style="width: 500px;" placeholder="PASS WORD">
+                <span class="icon is-medium is-left">
+                    <span class="mdi mdi-onepassword"></span>
+                  </span>
+            </div>
+        </div>
+
+        <div class="block">
+            <div class="control has-icons-left">    
+                <input class="input is-medium" type="text" style="width: 500px;" placeholder="PASS WORD CHECK">
+                <span class="icon is-medium is-left">
+                    <span class="mdi mdi-onepassword"></span>
+                  </span>
+            </div>
+        </div>
+
+        <div class="block">
+            <div class="control has-icons-left">    
+                <input class="input is-medium" type="text" style="width: 500px;" placeholder="NICKNAME">
+                <span class="icon is-medium is-left">
+                    <span class="mdi mdi-alpha-n"></span>
+                  </span>
+            </div>
+        </div>
+        
+        <div class="block">
+            <button class="button is-link">회원가입</button>
+        </div>
+    </div>
+{% endblock %}
