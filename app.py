@@ -55,6 +55,7 @@ client = MongoClient(
     'mongodb+srv://test:sparta@cluster0.ecijcpt.mongodb.net/?retryWrites=true&w=majority')
 db = client.dbtest
 
+
 @app.route('/')
 def base():
     if "nickname" in session:
@@ -147,9 +148,13 @@ def logout():
     flash("로그인 페이지로 이동되었습니다.")
     return redirect(url_for("login"))
 
-
 @app.route('/main', methods=["GET"])
 def main():
+    player = db.User.find_one({"nickname": session.get("nickname")})
+    if player['count']>0:
+        if player["record"] < player['count']:
+            db.User.update_one({'nickname': session.get("nickname")}, {'$set': {'record': player['count']}})
+            
     global count
     count = -1
     rank={}
@@ -159,24 +164,25 @@ def main():
             user_single = user_db_sort[i]
             rank[user_single['nickname']] = user_single['record']
         
-        return render_template("main.html",quiz={"quiz": "Game Start를 누르세요"}, nickname=session.get("nickname"), ranked = rank)
+        return render_template("main.html",quiz={"quiz": "Game Start를 누르세요"}, nickname=session.get("nickname"), ranked = rank, count=player['count'])
     else:
         for i in range(0, len(user_db_sort)):
             user_single = user_db_sort[i]
             rank[user_single['nickname']] = user_single['record']
         
-        return render_template("main.html",quiz={"quiz": "Game Start를 누르세요"}, nickname=session.get("nickname"), ranked = rank)
+        return render_template("main.html",quiz={"quiz": "Game Start를 누르세요"}, nickname=session.get("nickname"), ranked = rank, count=player['count'])
     #return render_template("main.html", nickname=session.get("nickname"))
 
 @app.route('/main/gamestart', methods=["GET"])
 def makequiz():
 
-    # 점수 세는 부분
+    player = db.User.find_one({"nickname": session.get("nickname")})
     global count
+    # 점수 세는 부분
     count += 1
-
-    user_nickname = "youngsang"  # "youngsang" 부분 나중에 클라이언트쪽에서 받아올 예정
-    db.user.update_one({'nickname': 'youngsang'}, {'$set': {'count': count}})
+    
+    #user_nickname = "youngsang"  #"youngsang" 부분 나중에 클라이언트쪽에서 받아올 예정
+    db.User.update_one({'nickname': session.get("nickname")}, {'$set': {'count': count}})
 
     #퀴즈 / 답 가져오는 부분
     quiz_category = request.args.get('quizType')
@@ -199,14 +205,13 @@ def makequiz():
             user_single = user_db_sort[i]
             rank[user_single['nickname']] = user_single['record']
 
-        print(rank)
-        return render_template("main.html",quiz=quiz, nickname=session.get("nickname"), ranked = rank)
+        return render_template("main.html",quiz=quiz, nickname=session.get("nickname"), ranked = rank ,  count=player['count'])
     else:
         for i in range(0, len(user_db_sort)):
             user_single = user_db_sort[i]
             rank[user_single['nickname']] = user_single['record']
         
-        return render_template("main.html",quiz=quiz, nickname=session.get("nickname"), ranked = rank)
+        return render_template("main.html",quiz=quiz, nickname=session.get("nickname"), ranked = rank, count=player['count'])
 
     # query = {"$and": [{"quiz_category": {"$gte": quiz_category}}, {"num": str(randomint)}]}
     # quiz = db.quiz.find_one(query)
