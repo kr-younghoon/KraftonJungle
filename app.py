@@ -60,8 +60,8 @@ def base():
     if "nickname" in session:
         return redirect(url_for("logout"))
     else:
-        #return redirect(url_for("main"))
-        return render_template("create.html")
+        return redirect(url_for("main"))
+        #return render_template("create.html")
         #return render_template("login.html")
         #return render_template("register.html")
         
@@ -152,18 +152,18 @@ def logout():
 def main():
     global count
     count = -1
-    
+    rank={}
     user_db_sort = list(db.User.find({},{'_id': False},).sort("record",-1))
     if len(user_db_sort) > 10:
-        for i in range(0,10):
+        for i in range(0, 10):
             user_single = user_db_sort[i]
-            rank={'nickname' : user_single['nickname'] ,'recond' :user_single['record']}
+            rank={user_single['nickname'] : user_single['record']}
         
         return render_template("main.html",quiz={"quiz": "Game Start를 누르세요"}, nickname=session.get("nickname"), ranked = rank)
     else:
         for i in range(0, len(user_db_sort)):
             user_single = user_db_sort[i]
-            rank={'nickname' : user_single['nickname'] ,'recond' :user_single['record']}
+            rank={user_single['nickname'] : user_single['record']}
         
         return render_template("main.html",quiz={"quiz": "Game Start를 누르세요"}, nickname=session.get("nickname"), ranked = rank)
     #return render_template("main.html", nickname=session.get("nickname"))
@@ -197,13 +197,14 @@ def makequiz():
     if len(user_db_sort) > 10:
         for i in range(0,10):
             user_single = user_db_sort[i]
-            rank={'nickname' : user_single['nickname'] ,'recond' :user_single['record']}
+            rank={user_single['nickname'] : user_single['record']}
 
+        print(rank)
         return render_template("main.html",quiz=quiz, nickname=session.get("nickname"), ranked = rank)
     else:
         for i in range(0, len(user_db_sort)):
             user_single = user_db_sort[i]
-            rank={'nickname' : user_single['nickname'] ,'recond' :user_single['record']}
+            rank={user_single['nickname'] : user_single['record']}
         
         return render_template("main.html",quiz=quiz, nickname=session.get("nickname"), ranked = rank)
 
