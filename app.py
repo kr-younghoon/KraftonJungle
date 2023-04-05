@@ -60,9 +60,9 @@ def base():
     if "nickname" in session:
         return redirect(url_for("logout"))
     else:
-        return redirect(url_for("main"))
+        #return redirect(url_for("main"))
         #return render_template("create.html")
-        #return render_template("login.html")
+        return render_template("login.html")
         #return render_template("register.html")
         
 
