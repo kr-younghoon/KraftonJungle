@@ -121,14 +121,13 @@
         <div class="tile is-parent">
           <article class="tile is-child box">
             <div class="content">
-              <p class="title">Rank charset</p><hr>
-              <div class="content">
-                <ol type="1">
-                  <ul>
+              <p class="title">Rank charset</p>
+              <h3 class="title">닉네임 | 맞춘 갯수</h3><hr>
+              <div class="content is-large">
+                <ol type="1" >
                     {% for n , r  in ranked.items() %}
-                        <li>{{ n }} | {{ r }}</li>
+                        <li>{{ n }}  |  {{ r }}</li><hr>
                     {% endfor%}
-                    </ul>
                 </ol>
               </div>
             </div>
