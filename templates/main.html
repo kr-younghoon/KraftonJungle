@@ -5,40 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
   <title>Example</title>
-
+  {%with messages = get_flashed_messages()%}
+  {%if messages %}
+  <script type="text/javascript">
+  alert("{{messages[0]}}");
+  </script>
+  {%endif%}
+  {%endwith%}
   <script>
+
     if ("{{ quiz['quiz'] }}" !== "Game Start를 누르세요") {
-      var timeLeft = 1000;  // 제한 시간 초기값을 설정함
+      var timeLeft = 10;  // 제한 시간 초기값을 설정함
       var timerId = setInterval(function () {  // 1초마다 실행되도록 함
         timeLeft--;
         document.getElementById("timeLeft").innerHTML = "남은 시간: " + timeLeft + "초";  // 시간을 표시함
         if (timeLeft <= 0) {  // 시간이 다 되면
           clearInterval(timerId);  // 타이머를 종료함
           alert("제한 시간이 초과되었습니다.");  // alert 창을 띄움
-          document.getElementById("userAnswer").disabled = true;  // 입력 창을 비활성화함
-          document.getElementById("submitButton").disabled = true;  // 제출 버튼을 비활성화함
+          window.location.href = "/main"
         }
       }, 1000);
     }
-
-    var progressBar = document.querySelector('.progress-bar');
-    var progress = 0;
-
-    var timer = setInterval(function() {
-    progress += 10;
-    progressBar.style.width = progress + '%';
-    progressBar.setAttribute('aria-valuenow', progress);
-
-  if (progress >= 100) {
-    clearInterval(timer);
-  }
-}, 1000);
-
-    function gameStart() {
-      document.getElementById("userAnswer").disabled = false;
-      gamestatus = 1;
-    }
-
+    
     function checkAnswer() {
       var answer = "{{ quiz['answer'] }}";  // 정답을 가져옴
       var userAnswer = document.getElementById("userAnswer").value;  // 사용자가 입력한 값을 가져옴
@@ -52,11 +40,11 @@
         return false;  // form을 submit하지 않음
       }
     }
+
   </script>
 
 
 </head>
-
 
 <body>
 
@@ -72,23 +60,21 @@
           </div>
           <div class="navbar-end">
             <div class="navbar-item">
+              <div class ="label">{{ nickname }}</div>
               <div class="buttons">
-                <a class="button is-success">
+                <a class="button is-success" href="{{url_for("create")}}">
                   <strong>문제 추가!</strong>
                 </a>
-                <a class="button is-light">
+                <form = action="/logout" Method="GET">
+                <button class="button is-light" type = "submit">
                   Logout
-                </a>
+                </button>
+              </form>
               </div>
             </div>
           </div>
         </nav>
       </div>
-
-      
-
-
-
       <div class="tile is-ancestor">
         <div class="tile is-vertical is-8">
           <div class="tile is-parent">
@@ -113,17 +99,19 @@
                       </div>
                     </div>              
                     <div class="box">
-                      <form method="GET" action="/main/gamestart" onsubmit="return checkAnswer();">
-                        <h3>문제: {{ quiz['quiz'] }}</h3>
+                      <form class="mb-0" method="GET" action="/main/gamestart" onsubmit="return checkAnswer();">
+                        <div class="columns">
+                        <h3 class="title is-3">문제: {{ quiz['quiz'] }}</h3>
                         <button class="button is-static is-light is-rounded is-pulled-right" id="timeLeft">time</button>
-                      
+                      </div>
                     </div>
                   </div>
+                <input type="hidden" name="quizType" value="{{ request.args.get('quizType') }}">
                 <input class="input is-large" type="text" id="userAnswer" name="userAnswer" placeholder="5초 안에 답을 입력하세요~">
 
               </div>
                 <div class="has-text-centered">
-                  <input class="button" type="submit" value="Submit">
+                  <input class="button" type="submit" value="제출">
                 </form>
                 </div>
               </div>
@@ -136,16 +124,11 @@
               <p class="title">Rank charset</p><hr>
               <div class="content">
                 <ol type="1">
-                  <li>나</li>
-                  <li>너</li>
-                  <li>우리</li>
-                  <li>Coffee</li>
-                  <li>Tea</li>
-                  <li>Milk</li>
-                  <li>Coffee</li>
-                  <li>Tea</li>
-                  <li>Milk</li>
-                  <li>Coffee</li>
+                  <ul>
+                    {% for n , r  in ranked.items() %}
+                        <li>{{ n }} | {{ r }}</li>
+                    {% endfor%}
+                    </ul>
                 </ol>
               </div>
             </div>
@@ -156,7 +139,6 @@
     </div>
   </div>
 </body>
-
 </html>
 
 

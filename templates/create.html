@@ -14,10 +14,13 @@
           </div>
           <div class="navbar-end">
             <div class="navbar-item">
+              <div class ="label">{{ nickname }}</div>
               <div class="buttons">
+                <form action = "/logout" Method="GET">
                 <button class="button is-light" type= "submit">
                   Logout
-                </a>
+                </button>
+              </form>
               </div>
             </div>
           </div>
@@ -59,7 +62,7 @@
         </div>
         <div class="has-text-centered">
           <input class="button" type="submit" value="Submit">
-          <a class="button" href="https://www.naver.com/">Go Home!</a>
+          <a class="button" href="{{url_for("main")}}">Go Home!</a>
         </div>
       </div>
     </div>
