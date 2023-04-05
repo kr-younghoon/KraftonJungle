@@ -1,0 +1,12 @@
+{% extends "base.html"  %}
+{% block content %}
+
+<label class="title is-1 mg-large" >MAIN NICKNAME : {{nickname}}</label>
+
+<form action="/logout" method="get">
+    <div class="block">
+        <button class="button is-link" type = "submit" >로그아웃</button>
+    </div>
+</form>
+
+{% endblock %}

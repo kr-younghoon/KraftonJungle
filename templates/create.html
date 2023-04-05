@@ -1,43 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-    <title>Example</title>
-</head>
-<body>
-  <div class="container is-max-desktop">
+{% extends "base.html"  %}
+{% block content %}
+
+<div class="container is-max-desktop">
     <div class="notification is-Light">
 
       <div class="box">
         <nav class="navbar" role="navigation" aria-label="main navigation">
-
         <div class="navbar-brand">
-          <a class="navbar-item" href="http://127.0.0.1:5500/1.html">
             <img src="https://jungle.krafton.com/resource/images/common/logo.svg" sizes="200%">
-          </a>
         </div>
-      
-                <div class="navbar-end">
-            <div class="navbar-item">
+        <h1 class="title is-1">{{nickname}}</h1>
+        <form action="/logout" method="GET">
               <div class="buttons">
-
-                <a class="button is-light">
+                <button class="button is-light" type= "submit">
                   Logout
                 </a>
               </div>
-            </div>
-          </div>
+            </form>
           </nav>
         </div>
 
-
     <div class="box">
-      
-      <h3 class="title is-3">추가 하고 싶은 문제를 추가하세요</h3>
-    </div>
-    <div class="box">
+      <h3 class="title is-3">게임 카테고리</h3>
       <div class="dropdown">
         <div class="dropdown-trigger">
           <button class="button" aria-haspopup="true" aria-controls="dropdown-menu3">
@@ -77,6 +61,9 @@
           </div>
         </div> -->
       </div>
+    </div>
+    <div class="box">
+        <h3 class="title is-3">현황판</h3>
       <div class="field">
         <div class="control">
           <textarea class="textarea is-large" placeholder="문제를 입력하시오"></textarea>
@@ -87,5 +74,5 @@
 
       </div>
     </div>
-  </body>
-</html>
+
+    {% endblock %}

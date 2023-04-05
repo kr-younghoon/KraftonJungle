@@ -4,10 +4,10 @@
         <div class="block">
             <label class="title is-1 mg-large" >Quiz Quiz</label>
           </div>
-
+        <form method="GET">
         <div class="block">
             <div class="control has-icons-left">
-              <input class="input is-medium" type="text" style="width: 500px;" placeholder="ID">
+              <input class="input is-medium" id = "user_id" name= "user_id" type="id" style="width: 500px;" placeholder="ID">
               <span class="icon is-medium is-left">
                 <span class="mdi mdi-identifier"></span>
               </span>
@@ -16,7 +16,7 @@
 
         <div class="block">
             <div class="control has-icons-left">    
-                <input class="input is-medium" type="text" style="width: 500px;" placeholder="PASS WORD">
+                <input class="input is-medium" id = "user_password" name= "user_password"type="password" style="width: 500px;" placeholder="PASS WORD">
                 <span class="icon is-medium is-left">
                     <span class="mdi mdi-onepassword"></span>
                   </span>
@@ -25,10 +25,11 @@
         
         <div class="block">
             <div class="buttons">
-                <button class="button is-link">로그인</button>
-                <button class="button is-white"></button>
-                <button class="button is-link">회원가입</button>
+                <button class="button is-link"  type = "submit" formaction = "/login">로그인</button>
+                <button class="button is-white" tpye = "text"></button>
+                <button class="button is-link"  type = "submit" formaction = "/register">회원가입</button>
             </div>
         </div>
+    </form>
     </div>
 {% endblock %}
