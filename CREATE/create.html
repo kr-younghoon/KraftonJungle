@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-    <title>Example</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <title>ĆRĘÄTĒ PAGE</title>
 </head>
+
 <body>
   <div class="container is-max-desktop">
     <div class="notification is-Light">
@@ -13,12 +15,12 @@
       <div class="box">
         <nav class="navbar" role="navigation" aria-label="main navigation">
 
-        <div class="navbar-brand">
-          <a class="navbar-item" href="http://127.0.0.1:5500/test/1.html">
-            <img src="https://jungle.krafton.com/resource/images/common/logo.svg" width="auto" height="auto">
-          </a>
-        </div>
-                <div class="navbar-end">
+          <div class="navbar-brand">
+            <a class="navbar-item" href="http://127.0.0.1:5500/test/1.html">
+              <img src="https://jungle.krafton.com/resource/images/common/logo.svg" sizes="200%">
+            </a>
+          </div>
+          <div class="navbar-end">
             <div class="navbar-item">
               <div class="buttons">
 
@@ -28,37 +30,51 @@
               </div>
             </div>
           </div>
-          </nav>
-        </div>
+        </nav>
+      </div>
 
 
-    <div class="box">
-      
-      <h3 class="title is-3">추가 하고 싶은 문제를 추가하세요</h3>
-    </div>
-    <div class="box">
       <div class="box">
-        <div class="columns">
-          <div class="column">
-            <h5 class="title is-5">게임선택 : </h5>
-          </div>
-            <div class="select">
-              <select>
-                <option>수도퀴즈</option>
-                <option>인물퀴즈</option>
-              </select>
-            </div>
+        <form method="POST" action="/create">
+          <h3 class="title is-4 has-text-centered">친구들과 함께 즐기고 싶은 문제를 추가 하십시오 !</h3>
+        </form>
       </div>
-      <div class="field">
-        <div class="control">
-          <textarea class="textarea is-large" placeholder="문제를 입력하시오"></textarea>
+      <div class="box">
+        <div class="box">
+          <div class="columns">
+            <div class="column">
+              <h5 class="title is-5">게임선택 : </h5>
+            </div>
+
+
+            <form method="POST" action="/create">
+              <label for="quiz_category"></label>
+              <div class="select">
+                <select name="quiz_category">
+                  <option>수도퀴즈</option>
+                  <option>니가 그렇게 수학을 잘해?</option>
+                </select>
+              </div>
+          </div>
+
+          <div class="field">
+            <div class="control">
+              <label for="quiz"></label>
+              <textarea class="textarea is-large" placeholder="문제를 입력하시오" name="quiz" required></textarea>
+            </div>
+          </div>
+          <label for="answer"></label>
+          <input class="input is-large" type="text" placeholder="답을 입력하시오" name="answer" required>
+        </div>
+        <div class="has-text-centered">
+          <input class="button" type="submit" value="Submit">
+          <a class="button" href="https://www.naver.com/">Go Home!</a>
         </div>
       </div>
-      <input class="input is-large" type="text" placeholder="답을 입력하시오">
     </div>
-    <input class="button" type="submit" value="Submit input">
-    <input class="button" type="submit" value="Submit input">
-      </div>
-    </div>
-  </body>
+    </form>
+
+
+</body>
+
 </html>
