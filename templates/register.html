@@ -1,8 +1,17 @@
 {% extends "base.html"  %}
 {% block content %}
+<div class="columns is-flex is-flex-direction-column is-justify-content-center is-align-items-center">
+    <div class = "column">
+        <div class ="notification is-Light">
+        <div class  ="box">
+            <nav class="navbar" role="navigation" aria-label="main navigation">
+                <div class="navbar-brand">
+                    <img src="https://jungle.krafton.com/resource/images/common/logo.svg" sizes="200%">
+                </div>
+        </div>
     <div class = "box">
         <div class="block">
-            <label class="title is-1 mg-large" >회원가입</label>
+            <h3 class="title is-4 has-text-centered" >회원가입</label>
           </div>
         <form action="/register" method="POST">
         <div class="block">
@@ -42,8 +51,13 @@
         </div>
         
         <div class="block">
-            <button class="button is-link" type = "submit" >회원가입</button>
+            <div class="buttons is-right">
+                <button class="button is-link" type = "submit" >회원가입</button>
+            </div>
         </div>
     </form>
     </div>
+</div>
+</div>
+</div>
 {% endblock %}
