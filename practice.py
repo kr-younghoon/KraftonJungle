@@ -1,17 +1,24 @@
-# # 문열 안에 \n을 사용하여 줄바꿈
-# print(1,2,3, sep='\n')
+pos = [0] * 8
+flag = [False] * 8
+# print(flag)
 
 
-# #제어문자
-# print(" \" \\ \n 안녕하세요 \t 안녕하세요 ")
+def put():
+    for i in range(8): #0-7
+        print(f'{pos[i]:2}', end='')
+    print()
+    
 
-
-# a = [['3', 'abc'], ['4', 'def']]
-
-
-# print(a[1][1][1])
-
-
-ex_in = input().split()
-
-print(ex_in[1][::-1])
+def set(i):
+    for j in range(8):
+        if not flag[j]:
+            pos[i] = j # Q를 j행에 배치
+            if i == 7:
+                put()
+            else:
+                flag[j] = True
+                set(i + 1)
+                flag[j] = False
+        
+set(0)
+  
