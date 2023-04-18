@@ -1,6 +1,5 @@
-solution_list = [0, 1, 2, 3, 4, 5, 6]
+from collections import deque
 
-for i in solution_list:
-    for j in solution_list[:-1]:
-        if i != j:
-            print(f"{i} | {j}")
+queue = deque(x+1 for x in range(int(input())))
+
+print(queue)

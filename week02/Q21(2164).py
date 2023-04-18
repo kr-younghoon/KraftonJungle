@@ -3,20 +3,20 @@ input = sys.stdin.readline
 from collections import deque
 
 
-N = int(input())
-Q = [i for i in range(1, N+1)]
-count = 0
-print(Q)
+# N = int(input())
+# Q = [i for i in range(1, N+1)]
+# count = 0
+# print(Q)
 
-while len(Q) != 1:
-    j = Q[count]
+# while len(Q) != 1:
+#     j = Q[count]
     
-    if (j % 2 == 0): #짝수일때
-        Q.append(Q.pop(0))
-    elif (j % 2 != 0): #홀수일때
-        Q.pop(0)
+#     if (j % 2 == 0): #짝수일때
+#         Q.append(Q.pop(0))
+#     elif (j % 2 != 0): #홀수일때
+#         Q.pop(0)
     
-    count += 1
+#     count += 1
     
     
 
