@@ -4,6 +4,7 @@ from pymongo import MongoClient  # pymongo를 임포트 하기(패키지 인스�
 import jwt
 import datetime
 from random import *
+
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "qwda;asodihjf#@@ef2312"
 secret_key = "qwda;asodihjf#@@ef2312"
@@ -54,12 +55,13 @@ client = MongoClient(
     'mongodb+srv://test:sparta@cluster0.ecijcpt.mongodb.net/?retryWrites=true&w=majority')
 db = client.dbtest
 
+
 @app.route('/')
 def base():
     if "nickname" in session:
         return redirect(url_for("logout"))
     else:
-        #return render_template("main2.html")
+        #return redirect(url_for("main"))
         #return render_template("create.html")
         return render_template("login.html")
         #return render_template("register.html")
@@ -82,8 +84,8 @@ def login():
                 if checking(user_db_single['pw'], request.args.get('user_password')):
                     flash("로그인 성공")
                     # jwt 토큰?
-                    access_token = create_token(user_db_single['nickname'])
-                    print(access_token)
+                    #access_token = create_token(user_db_single['nickname'])
+                    #print(access_token)
                     # 섹션 사용
                     session["nickname"] = user_db_single['nickname']
                     return redirect(url_for("main"))
@@ -138,40 +140,85 @@ def register():
 
 @app.route('/logout', methods=["GET"])
 def logout():
-    flash("로그아웃 되었습니다.")
-    session.pop("nickname")
+    if "nickname" in session:
+        flash("로그아웃 되었습니다.")
+        session.pop("nickname")
+        return redirect(url_for("login"))
+    
+    flash("로그인 페이지로 이동되었습니다.")
     return redirect(url_for("login"))
 
-@app.route('/main2')
-def main2():
-
-    return render_template('main2.html')
-
-@app.route('/main')
+@app.route('/main', methods=["GET"])
 def main():
-    
+    player = db.User.find_one({"nickname": session.get("nickname")})
+    if player['count']>0:
+        if player["record"] < player['count']:
+            db.User.update_one({'nickname': session.get("nickname")}, {'$set': {'record': player['count']}})
+            
+    global count
+    count = -1
+    rank={}
     user_db_sort = list(db.User.find({},{'_id': False},).sort("record",-1))
-    user_db_list = list()
     if len(user_db_sort) > 10:
-        for i in range(0,10):
+        for i in range(0, 10):
             user_single = user_db_sort[i]
-            rank={'nickname' : user_single['nickname'] ,'recond' :user_single['record']}
-            user_db_list.append(rank)
+            rank[user_single['nickname']] = user_single['record']
         
-        return render_template("main.html", nickname=session.get("nickname"), people = len(user_db_list),rank_list = user_db_list)
+        return render_template("main.html",quiz={"quiz": "Game Start를 누르세요"}, nickname=session.get("nickname"), ranked = rank, count=player['count'])
     else:
         for i in range(0, len(user_db_sort)):
             user_single = user_db_sort[i]
-            rank={'nickname' : user_single['nickname'] ,'recond' :user_single['record']}
-            user_db_list.append(rank)
+            rank[user_single['nickname']] = user_single['record']
         
-        return render_template("main.html", nickname=session.get("nickname"), people = len(user_db_list),rank_list = user_db_list)
+        return render_template("main.html",quiz={"quiz": "Game Start를 누르세요"}, nickname=session.get("nickname"), ranked = rank, count=player['count'])
     #return render_template("main.html", nickname=session.get("nickname"))
 
+@app.route('/main/gamestart', methods=["GET"])
+def makequiz():
 
-@app.route('/create')
-def create():
-    return render_template("create.html", nickname=session.get("nickname"))
+    player = db.User.find_one({"nickname": session.get("nickname")})
+    global count
+    # 점수 세는 부분
+    count += 1
+    
+    #user_nickname = "youngsang"  #"youngsang" 부분 나중에 클라이언트쪽에서 받아올 예정
+    db.User.update_one({'nickname': session.get("nickname")}, {'$set': {'count': count}})
+
+    #퀴즈 / 답 가져오는 부분
+    quiz_category = request.args.get('quizType')
+
+    quiz_list = list(db.quiz.find({'quiz_category': quiz_category}, {'_id': False})) # quiz DB 크기(갯수) 가져와서 난수 생성 및 해당 난수 quiz/answer 값 가져오기
+    quiz_length = len(quiz_list)
+    randomint = randint(1, quiz_length)
+
+    quiz = {
+    "quiz_category": quiz_category,
+    "num": randomint,
+    "quiz": quiz_list[randomint-1]["quiz"],
+    "answer": quiz_list[randomint-1]["answer"]
+    }
+
+    user_db_sort = list(db.User.find({},{'_id': False},).sort("record",-1))
+    rank={}
+    if len(user_db_sort) > 10:
+        for i in range(0,10):
+            user_single = user_db_sort[i]
+            rank[user_single['nickname']] = user_single['record']
+
+        return render_template("main.html",quiz=quiz, nickname=session.get("nickname"), ranked = rank ,  count=player['count'])
+    else:
+        for i in range(0, len(user_db_sort)):
+            user_single = user_db_sort[i]
+            rank[user_single['nickname']] = user_single['record']
+        
+        return render_template("main.html",quiz=quiz, nickname=session.get("nickname"), ranked = rank, count = player['count'])
+
+    # query = {"$and": [{"quiz_category": {"$gte": quiz_category}}, {"num": str(randomint)}]}
+    # quiz = db.quiz.find_one(query)
+
+    # Jinja2 템플릿 엔진을 사용하여 HTML 렌더링
+
+
 
 # CREATE Part - YOUNGHOON
 # submit 기능과 countNUM 기능(일단 살려뒀습니다.)이 있습니다.
@@ -199,7 +246,7 @@ def submitQ():
             'NUM': new_num
         }
         db.quiz.insert_one(doc)
-        return render_template("main.html", new_num = new_num)
+        return render_template("create.html", new_num = new_num, nickname=session.get("nickname"))
     
     
     # elif request.method == "GET":
@@ -212,7 +259,7 @@ def submitQ():
     
     else:
         new_num = new_num + 1
-        return render_template("main.html",new_num = new_num)
+        return render_template("create.html",new_num = new_num, nickname=session.get("nickname"))
     
     
 # @app.route("/create", methods=["GET"])

@@ -13,13 +13,21 @@
             </a>
           </div>
           <div class="navbar-end">
-            <div class="navbar-item">
+              <section class="hero is-small">
+                <div class="hero-body">
+                  <div class="container has-text-centered">
+                    <h3 class="subtitle is-4" style="max-width: 800px; margin: 0 auto; line-height: 1;">{{ nickname }} 님</h3>
+                  </div>
+                </div>
+              </section>
               <div class="buttons">
+                <form action = "/logout" Method="GET">
                 <button class="button is-light" type= "submit">
-                  Logout
-                </a>
+                  로그아웃
+                </button>
+              </form>
               </div>
-            </div>
+
           </div>
         </nav>
       </div>
@@ -42,8 +50,9 @@
               <label for="quiz_category"></label>
               <div class="select">
                 <select name="quiz_category">
-                  <option>수도퀴즈</option>
-                  <option>니가 그렇게 수학을 잘해?</option>
+                  <option>수도</option>
+                  <option>이어말하기</option>
+                  <option>테스트</option>
                 </select>
               </div>
           </div>
@@ -58,8 +67,8 @@
           <input class="input is-large" type="text" placeholder="답을 입력하시오" name="answer" required>
         </div>
         <div class="has-text-centered">
-          <input class="button" type="submit" value="Submit">
-          <a class="button" href="https://www.naver.com/">Go Home!</a>
+          <input class="button" type="submit" value="제출">
+          <a class="button" href="{{url_for("main")}}">메인 페이지로 이동</a>
         </div>
       </div>
     </div>
