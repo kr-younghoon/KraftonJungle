@@ -1,5 +1,5 @@
-from collections import deque
+A = []
+B = list()
 
-queue = deque(x+1 for x in range(int(input())))
-
-print(queue)
+print(A)
+print(B)
