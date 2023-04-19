@@ -21,3 +21,5 @@ for _ in range(N):
             heapq.heappush(B,max_A)
 
     print(-A[0])
+    
+# https://www.acmicpc.net/problem/1655
