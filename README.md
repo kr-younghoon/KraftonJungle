@@ -1,4 +1,4 @@
-# [K-JG]컴퓨팅 사고로의 전환 | 백준 알고리즘 트레이닝 (Baekjoon-Algorithm-Challenges)
+## [K-JG]컴퓨팅 사고로의 전환 | 백준 알고리즘 트레이닝 (Baekjoon-Algorithm-Challenges)
 
 ### 📢 "빠릿한 머리로 문제를 풀어보는 시간!"
 
