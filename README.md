@@ -1,4 +1,4 @@
-# quizGame (Krafton Jungle WEEK00: Mini project)
+# Quiz-game (Krafton Jungle WEEK00: Mini project)
 #### 4/3 기획 - 4/4 기획 발표 및 제작(핵심적 기술 공부 및 기능 구현) - 4/5 제작(프론트엔드 CSS 프레임 워크 기술 선정 및 기능 연결) - 4/6 제작 시연 발표
 
 
