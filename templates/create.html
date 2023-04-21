@@ -8,21 +8,35 @@
         <nav class="navbar" role="navigation" aria-label="main navigation">
 
           <div class="navbar-brand">
-            <a class="navbar-item" href="http://127.0.0.1:5500/test/1.html">
+            <a class="navbar-item" href="{{url_for("main")}}">
               <img src="https://jungle.krafton.com/resource/images/common/logo.svg" sizes="200%">
             </a>
           </div>
           <div class="navbar-end">
+<<<<<<< HEAD
+              <section class="hero is-small">
+                <div class="hero-body">
+                  <div class="container has-text-centered">
+                    <h3 class="subtitle is-4" style="max-width: 800px; margin: 0 auto; line-height: 1;">{{ nickname }} 님</h3>
+                  </div>
+                </div>
+              </section>
+              <div class="buttons">
+                <form action = "/logout" Method="GET">
+                <button class="button is-light" type= "submit">
+                  로그아웃
+=======
             <div class="navbar-item">
               <div class ="label">{{ nickname }}</div>
               <div class="buttons">
                 <form action = "/logout" Method="GET">
                 <button class="button is-light" type= "submit">
                   Logout
+>>>>>>> main
                 </button>
               </form>
               </div>
-            </div>
+
           </div>
         </nav>
       </div>
@@ -45,8 +59,8 @@
               <label for="quiz_category"></label>
               <div class="select">
                 <select name="quiz_category">
-                  <option>수도퀴즈</option>
-                  <option>니가 그렇게 수학을 잘해?</option>
+                  <option>수도</option>
+                  <option>이어말하기</option>
                 </select>
               </div>
           </div>
@@ -61,8 +75,13 @@
           <input class="input is-large" type="text" placeholder="답을 입력하시오" name="answer" required>
         </div>
         <div class="has-text-centered">
+<<<<<<< HEAD
+          <input class="button" type="submit" value="제출">
+          <a class="button" href="{{url_for("main")}}">메인 페이지로 이동</a>
+=======
           <input class="button" type="submit" value="Submit">
           <a class="button" href="{{url_for("main")}}">Go Home!</a>
+>>>>>>> main
         </div>
       </div>
     </div>
