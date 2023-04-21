@@ -19,3 +19,12 @@
 <img width="1060" alt="image" src="https://user-images.githubusercontent.com/126774519/233562341-ade1b3f1-94f3-4aed-bedf-5fdd1bf189d1.png">
 <img width="1088" alt="image" src="https://user-images.githubusercontent.com/126774519/233562367-0b2a2bdf-936d-4af2-a7de-931ccdaaa3c0.png">
 <img width="1086" alt="image" src="https://user-images.githubusercontent.com/126774519/233562402-cd1daa8c-6a65-4f11-ab8b-2871a8ae037a.png">
+
+## <홈페이지>
+### 로그인 페이지
+#### 회원가입 페이지도 있는데 사진을 누락했습니다.
+![스크린샷 2023-04-21 오후 3 59 49](https://user-images.githubusercontent.com/126774519/233565240-b0128043-db91-4a2e-9dbc-c9cf33786c6a.png)
+### 메인 페이지
+![스크린샷 2023-04-21 오후 4 00 04](https://user-images.githubusercontent.com/126774519/233565272-3e76639d-7e6f-49b3-84c9-26e101c86d36.png)
+### 퀴즈 추가 
+![스크린샷 2023-04-21 오후 4 00 10](https://user-images.githubusercontent.com/126774519/233565285-fd380662-0e80-449b-af6d-48521fa8ca7c.png)
