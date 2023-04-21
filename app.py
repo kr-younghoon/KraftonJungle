@@ -154,7 +154,9 @@ def main():
     if player['count']>0:
         if player["record"] < player['count']:
             db.User.update_one({'nickname': session.get("nickname")}, {'$set': {'record': player['count']}})
-            
+
+    db.User.update_one({'nickname': session.get("nickname")}, {'$set': {'count': -1}})
+
     global count
     count = -1
     rank={}

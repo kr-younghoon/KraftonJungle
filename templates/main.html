@@ -17,7 +17,7 @@
         var COUNT = Number("{{count}}")+1;
 
         if ("{{ quiz['quiz'] }}" !== "Game Start를 누르세요") {
-            var timeLeft = 10; // 제한 시간 초기값을 설정함
+            var timeLeft = 5; // 제한 시간 초기값을 설정함
             var timerId = setInterval(function () { // 1초마다 실행되도록 함
                 timeLeft--;
                 document.getElementById("timeLeft").innerHTML = "남은 시간: " + timeLeft + "초"; // 시간을 표시함
@@ -61,7 +61,7 @@
             <div class="box">
                 <nav class="navbar" role="navigation" aria-label="main navigation">
                     <div class="navbar-brand">
-                        <a class="navbar-item" href="http://127.0.0.1:5500/1.html">
+                        <a class="navbar-item" href="{{url_for("main")}}">
                             <img src="https://jungle.krafton.com/resource/images/common/logo.svg">
                         </a>
                     </div>
@@ -83,7 +83,6 @@
 
                         <div class="navbar-item">
                             <div class="buttons">
-
                                 <a class="button is-success" href="{{ url_for("submitQ") }}">
                                     <strong>문제 추가</strong>
                                 </a>
