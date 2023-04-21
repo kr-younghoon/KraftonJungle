@@ -154,9 +154,13 @@ def main():
     if player['count']>0:
         if player["record"] < player['count']:
             db.User.update_one({'nickname': session.get("nickname")}, {'$set': {'record': player['count']}})
+<<<<<<< HEAD
 
     db.User.update_one({'nickname': session.get("nickname")}, {'$set': {'count': -1}})
 
+=======
+            
+>>>>>>> main
     global count
     count = -1
     rank={}
@@ -213,13 +217,20 @@ def makequiz():
             user_single = user_db_sort[i]
             rank[user_single['nickname']] = user_single['record']
         
+<<<<<<< HEAD
         return render_template("main.html",quiz=quiz, nickname=session.get("nickname"), ranked = rank, count = player['count'])
+=======
+        return render_template("main.html",quiz=quiz, nickname=session.get("nickname"), ranked = rank, count=player['count'])
+>>>>>>> main
 
     # query = {"$and": [{"quiz_category": {"$gte": quiz_category}}, {"num": str(randomint)}]}
     # quiz = db.quiz.find_one(query)
 
     # Jinja2 템플릿 엔진을 사용하여 HTML 렌더링
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
 
 
 # CREATE Part - YOUNGHOON

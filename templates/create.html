@@ -13,6 +13,7 @@
             </a>
           </div>
           <div class="navbar-end">
+<<<<<<< HEAD
               <section class="hero is-small">
                 <div class="hero-body">
                   <div class="container has-text-centered">
@@ -24,6 +25,14 @@
                 <form action = "/logout" Method="GET">
                 <button class="button is-light" type= "submit">
                   로그아웃
+=======
+            <div class="navbar-item">
+              <div class ="label">{{ nickname }}</div>
+              <div class="buttons">
+                <form action = "/logout" Method="GET">
+                <button class="button is-light" type= "submit">
+                  Logout
+>>>>>>> main
                 </button>
               </form>
               </div>
@@ -66,8 +75,13 @@
           <input class="input is-large" type="text" placeholder="답을 입력하시오" name="answer" required>
         </div>
         <div class="has-text-centered">
+<<<<<<< HEAD
           <input class="button" type="submit" value="제출">
           <a class="button" href="{{url_for("main")}}">메인 페이지로 이동</a>
+=======
+          <input class="button" type="submit" value="Submit">
+          <a class="button" href="{{url_for("main")}}">Go Home!</a>
+>>>>>>> main
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+<<<<<<< HEAD
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
@@ -29,6 +30,49 @@
                 }
             }, 1000);
         }
+=======
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <title>크래프톤 정글 | Quiz Quiz</title>
+  {%with messages = get_flashed_messages()%}
+  {%if messages %}
+  <script type="text/javascript">
+  alert("{{messages[0]}}");
+  </script>
+  {%endif%}
+  {%endwith%}
+  <script>
+
+    if ("{{ quiz['quiz'] }}" !== "Game Start를 누르세요") {
+      var timeLeft = 10;  // 제한 시간 초기값을 설정함
+      var timerId = setInterval(function () {  // 1초마다 실행되도록 함
+        timeLeft--;
+        document.getElementById("timeLeft").innerHTML = "남은 시간: " + timeLeft + "초";  // 시간을 표시함
+        if (timeLeft <= 0) {  // 시간이 다 되면
+          clearInterval(timerId);  // 타이머를 종료함
+          alert("제한 시간이 초과되었습니다.");  // alert 창을 띄움
+          window.location.href = "/main"
+        }
+      }, 1000);
+    }
+    
+    function checkAnswer() {
+      var answer = "{{ quiz['answer'] }}";  // 정답을 가져옴
+      var userAnswer = document.getElementById("userAnswer").value;  // 사용자가 입력한 값을 가져옴
+      if (userAnswer === '') {
+        alert("답을 입력해주세요.");  // 사용자가 답을 입력하지 않은 경우
+        return false;
+      } else if (answer == userAnswer) {
+        return true;  // 정답과 입력값이 일치하면 form을 submit함
+      } else {
+        alert("틀렸습니다.");  // 정답과 입력값이 일치하지 않으면 alert 창을 띄움
+        return false;  // form을 submit하지 않음
+      }
+    }
+
+  </script>
+>>>>>>> main
 
         function checkAnswer() {
             var answer = "{{ quiz['answer'] }}"; // 정답을 가져옴
@@ -58,6 +102,7 @@
     <div class="container is-max-desktop">
         <div class="notification is-Light">
 
+<<<<<<< HEAD
             <div class="box">
                 <nav class="navbar" role="navigation" aria-label="main navigation">
                     <div class="navbar-brand">
@@ -95,6 +140,87 @@
                         </div>
                     </div>
                 </nav>
+=======
+      <div class="box">
+        <nav class="navbar" role="navigation" aria-label="main navigation">
+          <div class="navbar-brand">
+            <a class="navbar-item" href="http://127.0.0.1:5500/1.html">
+              <img src="https://jungle.krafton.com/resource/images/common/logo.svg" sizes="200%">
+            </a>
+          </div>
+          <div class="navbar-end">
+            <div class="navbar-item">
+              <div class ="label">{{ nickname }}</div>
+              <div class="buttons">
+                <a class="button is-success" href="{{url_for("create")}}">
+                  <strong>문제 추가!</strong>
+                </a>
+                <form = action="/logout" Method="GET">
+                <button class="button is-light" type = "submit">
+                  Logout
+                </button>
+              </form>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+      <div class="tile is-ancestor">
+        <div class="tile is-vertical is-8">
+          <div class="tile is-parent">
+            <article class="tile is-child box">
+              <div class="content">
+                <div class="field">
+                  <div class="control block"> 
+                    <div class="box">
+                      <div class="columns block">
+                        <div class="column">
+                          <h5 class="title is-5">게임선택 : </h5>
+                        </div>
+                        <form method="GET" action="/main/gamestart">
+                          <div class="select">
+                            <select name="quizType">
+                              <option value="수도">수도</option>
+                              <option value="이어말하기">이어말하기</option>
+                            </select>
+                          </div>
+                          <button class="button" id="startButton" type="submit" name="start" value="True">게임 시작</button>
+                        </form>
+                      </div>
+                    </div>              
+                    <div class="box">
+                      <form class="mb-0" method="GET" action="/main/gamestart" onsubmit="return checkAnswer();">
+                        <div class="columns">
+                        <h3 class="title is-3">문제: {{ quiz['quiz'] }}</h3>
+                        <button class="button is-static is-light is-rounded is-pulled-right" id="timeLeft">time</button>
+                      </div>
+                    </div>
+                  </div>
+                <input type="hidden" name="quizType" value="{{ request.args.get('quizType') }}">
+                <input class="input is-large" type="text" id="userAnswer" name="userAnswer" placeholder="5초 안에 답을 입력하세요~" autofocus>
+
+              </div>
+                <div class="has-text-centered">
+                  <input class="button" type="submit" value="제출">
+                </form>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+        <div class="tile is-parent">
+          <article class="tile is-child box">
+            <div class="content">
+              <p class="title">Rank charset</p>
+              <h3 class="title">닉네임 | 맞춘 갯수</h3><hr>
+              <div class="content is-large">
+                <ol type="1" >
+                    {% for n , r  in ranked.items() %}
+                        <li>{{ n }}  |  {{ r }}</li><hr>
+                    {% endfor%}
+                </ol>
+              </div>
+>>>>>>> main
             </div>
             <div class="tile is-ancestor">
                 <div class="tile is-vertical is-8">
@@ -183,5 +309,4 @@
         </div>
     </div>
 </body>
-
 </html>
