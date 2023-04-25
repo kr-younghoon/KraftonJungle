@@ -29,7 +29,6 @@ def dfs(V):
         if(visited[i]==0 and matrix[V][i]==1):
             dfs(i)
 
-            
 def bfs(V):
     # 방문해야 할 곳을 순서대로 넣을 큐
     queue = [V]
@@ -49,4 +48,3 @@ def bfs(V):
 dfs(V)
 print()
 bfs(V)
-
