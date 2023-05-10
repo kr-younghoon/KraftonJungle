@@ -1,5 +1,5 @@
 #include "rbtree.h"
-
+// 안녕하세요......
 #include <stdlib.h>
 
 rbtree *new_rbtree(void) {
