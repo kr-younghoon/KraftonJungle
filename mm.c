@@ -8,6 +8,9 @@
  * NOTE TO STUDENTS: Replace this header comment with your own header
  * comment that gives a high level description of your solution.
  */
+
+// NEXT-FIT 구현
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -33,40 +36,64 @@ team_t team = {
     /* Second member's email address (leave blank if none) */
     ""
 };
+
+
 // Basic constants and macros 
-#define WSIZE 4 // 1워드
-#define DSIZE 8 // 2워드
-#define CHUNKSIZE (1<<12) // 초기 가용 블록과 힙 확장을 위한 기본 크기
+// [기본 상수와 매크로]
+#define WSIZE 4 
+// 1워드 | 워드, 헤더 푸터의 크기를 선언합니다. 블록의 크기와 관련된 정보를 저장합니다.
+#define DSIZE 8 
+// 2워드 | 더블워드, 주소 정보를 저장합니다.
+#define CHUNKSIZE (1<<12) 
+// 초기 가용 블록과 힙 확장을 위한 기본 크기 | 2^12(4096bytes), 힙을 확장할 때 사용되는 양
 
-#define MAX(x, y) ((x) > (y)? (x) : (y))
+#define MAX(x, y) ((x) > (y)? (x) : (y)) // 큰 값을 반환
+/* x가 y보다 큰지 비교하고 Boolean값을 ?(삼항 연산자)로 
+ * 결과가 참인 경우 x를 반환, 거짓인 경우 y를 반환합니다. 
+ */
 
-// Pack a size and allocated bit into a word
-#define PACK(size, alloc) ((size) | (alloc))
+// Pack a size and allocated bit into a word 
+// [크기와 할당 비트를 하나의 워드에 압축하는 것]
+#define PACK(size, alloc) ((size) | (alloc)) 
+// -> 워드(Header or Footer)에  할당정보(0,1)와 크기(메모리 블록의 크기) 저장할 값 반환
+// 비트 OR연산자로 "|"를 사용하여 size와 alloc의 비트를 결합하여 하나의 워드에 패킹된 값을 생성합니다.
+// 그렇게 하여 크기와 할당 정보를 하나의 워드에 저장
 
-// Read and wirte a word at address p
-#define GET(p) (*(unsigned int *)(p))
-#define PUT(p, val) (*(unsigned int *)(p) = (val))
+// Read and wirte a word at address p 
+// [주소 p에서 워드를 읽고 쓰는 것]
+#define GET(p) (*(unsigned int *)(p)) // p가 참조하는 word를 반환한다. 
+#define PUT(p, val) (*(unsigned int *)(p) = (val)) // p가 가리키는 word에 val 저장.
+// unsigned int -> 부호가 없는 정수를 나타내는 데이터 형식.  (0 - 4bytes..32bit(4,294,967,295))
 
-// READ THE SIZE AND ALLOCATED FIELDS FROM ADDRESS p
-#define GET_SIZE(p) ((GET(p)) & ~0x7)
-#define GET_ALLOC(p) ((GET(p)) & 0x1)
+// READ THE SIZE AND ALLOCATED FIELDS FROM ADDRESS p 
+// [주소 p에서 크기와 할당 필드를 읽는 것]
+#define GET_SIZE(p) ((GET(p)) & ~0x7) // p가 가리키는 block size 반환
+// 마지막 3비트를 0으로 만들어 크기 필드를 추출합니당
+#define GET_ALLOC(p) ((GET(p)) & 0x1) // p가 가리키는 block의 할당 비트 반환
+// 읽어온 워드에서 마지막 비트(이진수로 1)을 추출하는 역할!
 
-// Given block ptr bp, compute address of its header and footer
-#define HDRP(bp) ((char *)(bp) - WSIZE)
+// Given block ptr bp, compute address of its header and footer 
+// [주어진 블록 포인터 bp를 기반으로 해당 블록의 헤더와 푸터 주소를 계산하는 것]
+#define HDRP(bp) ((char *)(bp) - WSIZE) 
+// bp가 가리키는 block의 Header를 가리키는 포인터 변환
 #define FTRP(bp) ((char *)(bp) + GET_SIZE(HDRP(bp)) - DSIZE)
+// bp가 가리키는 block의 Footer를 가리키는 포인터 반환
 
 // GIVEN block ptr bp, compute address of next and previous blocks
+// [주어진 블록 포인터 bp를 기반으로 다음 블록과 이전 블록의 주소를 계산하는 것]
 #define NEXT_BLKP(bp) ((char *)(bp) + GET_SIZE((char *)(bp) - WSIZE))
+// 다음 block pointer(주소) 반환
 #define PREV_BLKP(bp) ((char *)(bp) - GET_SIZE(((char *)(bp) - DSIZE)))
+// 이전 block pointer(주소) 반환
 
-static void *heap_listp;
-static void *nextfit;
 
 static void *extend_heap(size_t words);
 static void *coalesce(void *bp);
 static void *find_fit(size_t asize);
 static void place(void *bp, size_t asize);
 
+static void *heap_listp;
+static char *nextfit;
 
 
 /* 
