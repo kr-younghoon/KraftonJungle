@@ -275,8 +275,9 @@ thread_name(void)
 struct thread *
 thread_current(void)
 {
+	// printf("hello c world\t\t\t| thread.c:278\n");
 	struct thread *t = running_thread();
-
+	// printf("t = %d \t\t\t| thread.c:280\n",t == NULL);
 	/* Make sure T is really a thread.
 	   If either of these assertions fire, then your thread may
 	   have overflowed its stack.  Each thread has less than 4 kB
@@ -284,7 +285,6 @@ thread_current(void)
 	   recursion can cause stack overflow. */
 	ASSERT(is_thread(t));
 	ASSERT(t->status == THREAD_RUNNING);
-
 	return t;
 }
 

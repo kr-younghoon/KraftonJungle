@@ -19,9 +19,12 @@
 #include "threads/vaddr.h"
 #include "intrinsic.h"
 #include "userprog/syscall.h"
+#define VM
 #ifdef VM
 #include "vm/vm.h"
 #endif
+
+#include "filesys/file.h"
 
 static void process_cleanup(void);
 static bool load(const char *file_name, struct intr_frame *if_);
@@ -33,6 +36,7 @@ static void
 process_init(void)
 {
 	struct thread *current = thread_current();
+	// printf("process_init IN/OUT - process.c:37\n");
 }
 
 /* Starts the first userland program, called "initd", loaded from FILE_NAME.
@@ -66,14 +70,20 @@ tid_t process_create_initd(const char *file_name)
 static void
 initd(void *f_name)
 {
+	// printf("안녕하세요!\n");
 #ifdef VM
+	// printf("#ifdef VM -> supplemental_page_table_init process.c:72\n");
 	supplemental_page_table_init(&thread_current()->spt);
+	// printf("#ifdef end spt초기화완료 - process.c:74\n");
 #endif
-
+	// printf("#endif process_init(); process.c:77\n");
 	process_init();
-
-	if (process_exec(f_name) < 0)
+	// printf("process_init() -> if(process_exec()<0) process.c:79\n");
+	if (process_exec(f_name) < 0) {
+		// printf("PANIC FAIL TO LAUNCH INITD : process.c:81\n");
 		PANIC("Fail to launch initd\n");
+	}
+	// printf("NOT_REACHED();\n");
 	NOT_REACHED();
 }
 
@@ -95,7 +105,7 @@ tid_t process_fork(const char *name, struct intr_frame *if_ UNUSED)
 	sema_down(&child->load_sema);
 	if (child->exit_status == -2)
 	{
-		sema_up(&child->exit_sema);
+		// sema_up(&child->exit_sema);
 		return TID_ERROR;
 	}
 
@@ -224,6 +234,8 @@ int process_exec(void *f_name)
 	char *file_name = f_name;
 	bool success;
 
+	// printf("process exec start - process.c:235\n");
+
 	/* We cannot use the intr_frame in the thread structure.
 	 * This is because when current thread rescheduled,
 	 * it stores the execution information to the member. */
@@ -234,7 +246,7 @@ int process_exec(void *f_name)
 
 	/* We first kill the current context */
 	process_cleanup();
-
+	// printf("process_cleanup() - process.c:247\n");
 	/* ---------------추가한 부분------------- */
 	// parsing
 	char *save_ptr, *tocken;
@@ -246,16 +258,19 @@ int process_exec(void *f_name)
 		count++;
 	}
 	/* ---------------------------------- */
-
+	// printf("succ = load() process.c:259\n");
 	/* And then load the binary */
+	lock_acquire(&filesys_lock);
 	success = load(file_name, &_if);
-
+	lock_release(&filesys_lock);
+	// printf("process.c:262\n");
 	if (!success)
 	{
+		// printf("if(!success) - process.c:265\n");
 		palloc_free_page(file_name);
 		return -1;
 	}
-
+	// printf("process.c:269\n");
 	/* ---------------추가한 부분------------- */
 	// set up stack
 	argument_stack(arg, count, &_if.rsp);
@@ -264,15 +279,18 @@ int process_exec(void *f_name)
 
 	// hex_dump(_if.rsp, _if.rsp, USER_STACK - (uint64_t)_if.rsp, true);
 	/* ---------------------------------- */
-
+	// printf("process.c:274\n");
 	/* If load failed, quit. */
 	palloc_free_page(file_name);
 	// if (!success)
 	// 	return -1;
-
 	/* Start switched process. */
+	// printf("process.c:280\n");
+	// printf("%d\n",&_if);
 	do_iret(&_if);
+	// printf("process.c:282\n");
 	NOT_REACHED();
+	// printf("end - process.c:279\n");
 }
 
 /* Waits for thread TID to die and returns its exit status.  If
@@ -290,14 +308,16 @@ int process_wait(tid_t child_tid UNUSED)
 	 * XXX:       to add infinite loop here before
 	 * XXX:       implementing the process_wait. */
 	struct thread *child = get_child_process(child_tid);
+	// printf("[process_wait] run \t\t\t\t| process.c:307\n");
 	if (child == NULL)
 	{
+		// printf("[process_wait]if(child == NULL) t\t\t| process.c:315\n");
 		return -1;
 	}
 	sema_down(&child->wait_sema);
 	list_remove(&child->child_elem);
 	sema_up(&child->exit_sema);
-
+	// printf("[process_wait] stop \t\t\t\t| process.c:315\n");
 	return child->exit_status;
 }
 
@@ -436,7 +456,7 @@ load(const char *file_name, struct intr_frame *if_)
 	off_t file_ofs;
 	bool success = false;
 	int i;
-
+	// printf("load 시작 : process.c:453\n");
 	/* Allocate and activate page directory. */
 	t->pml4 = pml4_create();
 	if (t->pml4 == NULL)
@@ -464,7 +484,7 @@ load(const char *file_name, struct intr_frame *if_)
 	for (i = 0; i < ehdr.e_phnum; i++)
 	{
 		struct Phdr phdr;
-
+		// printf("load-for문 loop // process.c:481\n");
 		if (file_ofs < 0 || file_ofs > file_length(file))
 			goto done;
 		file_seek(file, file_ofs);
@@ -499,6 +519,7 @@ load(const char *file_name, struct intr_frame *if_)
 					 * Read initial part from disk and zero the rest. */
 					read_bytes = page_offset + phdr.p_filesz;
 					zero_bytes = (ROUND_UP(page_offset + phdr.p_memsz, PGSIZE) - read_bytes);
+					// printf("if : process.c:516\n");
 				}
 				else
 				{
@@ -506,24 +527,31 @@ load(const char *file_name, struct intr_frame *if_)
 					 * Don't read anything from disk. */
 					read_bytes = 0;
 					zero_bytes = ROUND_UP(page_offset + phdr.p_memsz, PGSIZE);
+					// printf("else : process.c:523\n");
 				}
+				// printf("load-load_seg-run // process.c:526\n");
 				if (!load_segment(file, file_page, (void *)mem_page,
-								  read_bytes, zero_bytes, writable))
+								  read_bytes, zero_bytes, writable)) {
+					// printf("if !load_seg : process.c:528\n");
 					goto done;
+				}
 			}
-			else
+			else {
 				goto done;
+				// printf("else goto done; : process.c:534\n");
+			}
 			break;
 		}
 	}
 
 	t->running = file;
 	file_deny_write(file);
-
+	// printf("load-setup_stack()-run // process.c:543\n");
 	/* Set up stack. */
-	if (!setup_stack(if_))
+	if (!setup_stack(if_)) {
 		goto done;
-
+		// printf("load-setup_stack()-in/out // process.c:548\n");
+	}
 	/* Start address. */
 	if_->rip = ehdr.e_entry;
 
@@ -604,7 +632,8 @@ static bool install_page(void *upage, void *kpage, bool writable);
  * user process if WRITABLE is true, read-only otherwise.
  *
  * Return true if successful, false if a memory allocation error
- * or disk read error occurs. */
+ * or disk read error occurs.
+*/
 static bool
 load_segment(struct file *file, off_t ofs, uint8_t *upage,
 			 uint32_t read_bytes, uint32_t zero_bytes, bool writable)
@@ -696,35 +725,58 @@ install_page(void *upage, void *kpage, bool writable)
 static bool
 lazy_load_segment(struct page *page, void *aux)
 {
+	// printf("lazy_load_seg in - process.c:709\n");
 	/* TODO: Load the segment from the file */
 	/* TODO: This called when the first page fault occurs on address VA. */
 	/* TODO: VA is available when calling this function. */
+	struct lazy_load_arg *lazy_load_arg = (struct lazy_load_arg *)aux;
+
+	// 1) 파일의 position을 ofs으로 지정한다.
+	file_seek(lazy_load_arg->file, lazy_load_arg->ofs);
+	// 2) 파일을 read_bytes만큼 물리 프레임에 읽어 들인다.
+	if (file_read(lazy_load_arg->file, page->frame->kva, lazy_load_arg->read_bytes) != (int)(lazy_load_arg->read_bytes)) {
+		palloc_free_page(page->frame->kva);
+		// printf("lazy_load_seg false return - process.c:720\n");
+		return false;
+	}
+	// 3) 다 읽은 지점부터 zero_bytes만큼 0으로 채운다.
+	memset(page->frame->kva + lazy_load_arg->read_bytes, 0, lazy_load_arg->zero_bytes);
+	// printf("lazy_load_seg true return - process.c:725\n");
+	return true;
 }
 
-/* Loads a segment starting at offset OFS in FILE at address
- * UPAGE.  In total, READ_BYTES + ZERO_BYTES bytes of virtual
- * memory are initialized, as follows:
- *
- * - READ_BYTES bytes at UPAGE must be read from FILE
- * starting at offset OFS.
- *
- * - ZERO_BYTES bytes at UPAGE + READ_BYTES must be zeroed.
- *
- * The pages initialized by this function must be writable by the
- * user process if WRITABLE is true, read-only otherwise.
- *
- * Return true if successful, false if a memory allocation error
- * or disk read error occurs. */
+
+
+/* (수정, 10) 이 함수는 프로세스가 실행될 때, 실행 파일을 현재 스레드로 로드하는 함수인 load함수에서 호출된다.
+	-> 파일 내용을 upage에 로드하는 함수이다. 파일의 내용을 로드하기 위해서 upage를 할당할 page가 필요한데,
+	위에서 수정한 vm_alloc_page_with_initializer 함수를 호출해서 페이지를 생성한다.
+
+	Lazy Loading 을 사용해야 하므로, 여기서 바로 파일의 내용을 로드하지 않아야 한다.
+	그래서 page에 내용을 로드할 때 사용할 함수와 필요한 인자들을 넣어줘야 하는데,
+	vm_alloc_page_with_initializer 함수의 네 번째, 다섯 번째 인자가 각각 로드할 때
+	사용할 함수, 그리고 그 때 필요한 인자에 해당한다.
+
+	내용을 로드할 때 사용할 함수는 Lazy_load_segment를 사용하고, 인자는 직접 만들어서 넘겨줘야 한다.
+	lazy_load_segment에서 필요한 정보는 아래와 같다.
+	 - `file`          : 내용이 담긴 파일 객체
+	 - `ofs`           : 이 페이지에서 읽기 시작할 위치
+	 - `read_bytes`    : 이 페이지에서 읽어야 하는 바이트의 수
+	 - `zero_bytes`    : 이 페이지에서 read_bytes만큼 읽고 공간이 남아 0으로 채워야 하는 바이트 수
+	 - `lazy_load_arg` : 라는 구조체를 새로 정의해서 선언하고 안에 위 정보들을 담아서 vm_alloc_page_with_initializer 함수의 마지막 인자로 전달했다
+	
+	이제 page fault가 처음 발생했을 때, lazy_load_segment가 실행되고, lazy_load_arg가 인자로 사용되어 내용이 로딩될 것이다. */
 static bool
 load_segment(struct file *file, off_t ofs, uint8_t *upage,
 			 uint32_t read_bytes, uint32_t zero_bytes, bool writable)
 {
+	// printf("load_seg(start) - process.c:764\n");
 	ASSERT((read_bytes + zero_bytes) % PGSIZE == 0);
 	ASSERT(pg_ofs(upage) == 0);
 	ASSERT(ofs % PGSIZE == 0);
-
+	// printf("load_seg(assert) - process.c:768\n");
 	while (read_bytes > 0 || zero_bytes > 0)
 	{
+		// printf("while running - process.c:771\n");
 		/* Do calculate how to fill this page.
 		 * We will read PAGE_READ_BYTES bytes from FILE
 		 * and zero the final PAGE_ZERO_BYTES bytes. */
@@ -732,31 +784,55 @@ load_segment(struct file *file, off_t ofs, uint8_t *upage,
 		size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
 		/* TODO: Set up aux to pass information to the lazy_load_segment. */
-		void *aux = NULL;
+		struct lazy_load_arg *lazy_load_arg = (struct lazy_load_arg *)malloc(sizeof(struct lazy_load_arg));
+		lazy_load_arg->file = file;
+		lazy_load_arg->ofs = ofs;
+		lazy_load_arg->read_bytes = page_read_bytes;
+		lazy_load_arg->zero_bytes = page_zero_bytes;
 		if (!vm_alloc_page_with_initializer(VM_ANON, upage,
-											writable, lazy_load_segment, aux))
+											writable, lazy_load_segment, lazy_load_arg)) {
+			// printf("load_seg(vp_init) -> false - process.c:786\n");
 			return false;
+		}
 
 		/* Advance. */
 		read_bytes -= page_read_bytes;
-		zero_bytes -= page_zero_bytes;
+ 		zero_bytes -= page_zero_bytes;
+		ofs += page_read_bytes;
 		upage += PGSIZE;
+		// printf("load_seg(Advance) -> true - process.c:781\n");
 	}
+	// printf("load_seg true return - process.c:785\n");
 	return true;
 }
+
 
 /* Create a PAGE of stack at the USER_STACK. Return true on success. */
 static bool
 setup_stack(struct intr_frame *if_)
 {
+	// printf("setup_stack - process.c:799\n");
 	bool success = false;
+	// 스택은 아래로 성장하므로, USER_STACK에서 PGSIZE만큼 아래로 내린 지점에서 페이지를 생성한다.
 	void *stack_bottom = (void *)(((uint8_t *)USER_STACK) - PGSIZE);
+    // uint8_t kpage = palloc_get_page(PAL_USER | PAL_ZERO);
 
 	/* TODO: Map the stack on stack_bottom and claim the page immediately.
 	 * TODO: If success, set the rsp accordingly.
 	 * TODO: You should mark the page is stack. */
 	/* TODO: Your code goes here */
-
+	// 스택을 stack_bottom에 매핑하고 즉시 페이지를 할당합니다. 
+	// 성공하면 rsp를 적절히 설정합니다. 페이지를 스택으로 표시해야 합니다.
+	// printf("--if.vm_alloc_page-- process.c:810\n");
+	if(vm_alloc_page(VM_ANON | VM_MARKER_0, stack_bottom, 1)) {// (type, upage, writable)
+		success = vm_claim_page(stack_bottom);
+		// success = install_page(((uint8_t *)USER_STACK) - PGSIZE, kpage, true);
+		if (success)
+			if_ -> rsp = USER_STACK;
+		// printf("%d\n", success);
+		// printf("process.c:816\n");
+	}
+	// printf("setup_stack - process.c:820\n");
 	return success;
 }
 #endif /* VM */

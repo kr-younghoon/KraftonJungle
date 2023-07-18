@@ -37,6 +37,8 @@ void seek(int fd, unsigned position);
 unsigned tell(int fd);
 void close(int fd);
 
+void *mmap(void *addr, size_t length, int writable, int fd, off_t offset);
+
 /* System call.
  *
  * Previously system call services was handled by the interrupt handler
@@ -50,7 +52,7 @@ void close(int fd);
 #define MSR_LSTAR 0xc0000082		/* Long mode SYSCALL target */
 #define MSR_SYSCALL_MASK 0xc0000084 /* Mask for the eflags */
 
-struct lock filesys_lock; // 파일 동기화를 위한 전역변수
+ // 파일 동기화를 위한 전역변수
 
 void syscall_init(void) {
 	write_msr(MSR_STAR, ((uint64_t)SEL_UCSEG - 0x10) << 48 |
@@ -69,7 +71,9 @@ void syscall_init(void) {
 /* The main system call interface */
 void syscall_handler(struct intr_frame *f UNUSED) {
 	int sys_num = f->R.rax; // syscall number
-
+#ifdef VM
+	thread_current()->rsp = f->rsp; // 추가
+#endif
 	switch (sys_num) {
 	case SYS_HALT:
 		halt();
@@ -112,6 +116,12 @@ void syscall_handler(struct intr_frame *f UNUSED) {
 		break;
 	case SYS_CLOSE:
 		close(f->R.rdi);
+	case SYS_MMAP:
+		f->R.rax = mmap(f->R.rdi, f->R.rsi, f->R.rdx, f->R.r10, f->R.r8);
+		break;
+	case SYS_MUNMAP:
+		munmap(f->R.rdi);
+		break;
 	}
 }
 
@@ -125,9 +135,9 @@ void check_address(void *addr) {
 	if (!is_user_vaddr(addr)) { // 유저 영역에 속해있지 않을 경우
 		exit(-1);
 	}
-	if(pml4_get_page(thread_current()->pml4, addr) == NULL) {
-		exit(-1);
-	}
+	// if(pml4_get_page(thread_current()->pml4, addr) == NULL) {
+	// 	exit(-1);
+	// }
 }
 
 // 운영체제를 중지한다.
@@ -167,13 +177,17 @@ int exec(const char *file) {
 
 // 자식 프로세스가 끝날 떄까지 기다린다.
 int wait(int pid) {
+	// printf("[wait] \t\t\t\t| syscall.c:172\n");
 	return process_wait(pid);
 }
 
 // 파일 생성
 bool create(const char *file, unsigned initial_size) {
+	lock_acquire(&filesys_lock);
 	check_address(file); // 유저 영역의 주소인지 확인
-	return filesys_create(file, initial_size);
+	bool succ = filesys_create(file, initial_size);
+	lock_release(&filesys_lock);
+	return succ;
 }
 
 // 파일 삭제
@@ -184,17 +198,28 @@ bool remove(const char *file) {
 
 // 파일 열기
 int open(const char *file) {
+	// printf("\n[open] start -> check_addr : \t\t\t| syscall.c:189\n");
 	check_address(file);
+	// printf("[open]check_addr -> lock_acq : %s \t\t| syscall.c:191\n", file);
+	lock_acquire(&filesys_lock);
 	struct file *f = filesys_open(file);
+	// printf("[open]if f == NULL \t\t\t| syscall.c:194\n");
 	if (f == NULL) {
+		lock_release(&filesys_lock);
+
+		// printf("f is null \t\t\t| syscall.c:196\n");
 		return -1;
 	}
-	// 파일 디스크립터 생성하기
+	// printf("[open]file dscrptor \t\t\t| syscall.c:199\n");
+	// 파일 디스크립터 생성하기 2
 	int fd = process_add_file(f);
-
+	// printf("[open]fd todjtd새엇ㅇ 이게 뭐야 ㅅㅂ \t\t\t| syscall.c:202\n");
 	if (fd == -1) {
 		file_close(f);
+		// printf("open - file_close(f) \t\t\t| syscall.c:205\n");
 	}
+	lock_release(&filesys_lock);
+	// printf("open out %d \t\t\t\t| syscall.c:207\n\n", fd);
 	return fd;
 }
 
@@ -220,9 +245,15 @@ int read(int fd, void *buffer, unsigned size) {
 	}
 	else {
 		struct file *f = process_get_file(fd);
-		if (f == NULL) {
-			return -1;
-		}
+		#ifdef VM
+    		struct page *read_page = spt_find_page(&thread_current()->spt, buffer);
+      		if(read_page && !read_page->writable){
+        		exit(-1);
+    	}
+    	#endif
+			if (f == NULL) {
+				return -1;
+			}
 		lock_acquire(&filesys_lock);
 		result = file_read(f, buffer, size);
 		lock_release(&filesys_lock);
@@ -290,4 +321,32 @@ void close(int fd) {
 	}
 	file_close(f);
 	process_close_file(fd); // fdt에서 제거하기
+}
+
+void *
+mmap(void *addr, size_t length, int writable, int fd, off_t offset) {
+	// printf("[mmap] start \t\t\t| [syscall.c:327]\n");
+	if (!addr || addr != pg_round_down(addr))
+		return NULL;
+	if (offset != pg_round_down(offset))
+		return NULL;
+	if (!is_user_vaddr(addr) || !is_user_vaddr(addr + length))
+		return NULL;
+	if (spt_find_page(&thread_current()->spt, addr))
+		return NULL;
+	
+	struct file *f = process_get_file(fd);
+	if (f == NULL)
+		return NULL;
+	if (file_length(f) == 0 || (int)length <= 0)
+		return NULL;
+	// printf("[mmap] end \t\t\t| [syscall.c:327]\n");
+	return do_mmap(addr, length, writable, f, offset);
+}
+
+void
+munmap(void *addr) {
+	// printf("[m-unmap] start \t\t\t| [syscall.c:347]\n");
+	do_munmap(addr);
+	// printf("[m-unmap] end \t\t\t| [syscall.c:347]\n");
 }

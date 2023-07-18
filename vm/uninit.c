@@ -22,7 +22,10 @@ static const struct page_operations uninit_ops = {
 	.type = VM_UNINIT,
 };
 
-/* DO NOT MODIFY this function */
+/* (수정금지!)
+	uninit_new 함수에서는 매개변수로 받은 page 구조체를 uninit type으로 만든다.
+	(page 구조체는 uninit/anon/file/page_cache 중 한가지 타입을 가지는데, 
+	여기서는 uninit 타입으로 만드는 거니까 page 구조체에 uninit 필드가 생기는 것이다.) */
 void
 uninit_new (struct page *page, void *va, vm_initializer *init,
 		enum vm_type type, void *aux,
@@ -43,13 +46,15 @@ uninit_new (struct page *page, void *va, vm_initializer *init,
 }
 
 /* Initalize the page on first fault */
+// 첫번째 페이지 폴트시 페이지를 초기화합니다.
 static bool
 uninit_initialize (struct page *page, void *kva) {
 	struct uninit_page *uninit = &page->uninit;
 
 	/* Fetch first, page_initialize may overwrite the values */
-	vm_initializer *init = uninit->init;
-	void *aux = uninit->aux;
+	// page_initializer 함수가 값을 덮어쓸 수 있으므로 이전에 가져온 값들을 먼저 저장해야 함
+	vm_initializer *init = uninit->init; // lazy_load_segment
+	void *aux = uninit->aux; // lazy_load_arg
 
 	/* TODO: You may need to fix this function. */
 	return uninit->page_initializer (page, uninit->type, kva) &&
