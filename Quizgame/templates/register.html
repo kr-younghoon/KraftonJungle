@@ -1,0 +1,63 @@
+{% extends "base.html"  %}
+{% block content %}
+<div class="columns is-flex is-flex-direction-column is-justify-content-center is-align-items-center">
+    <div class = "column">
+        <div class ="notification is-Light">
+        <div class  ="box">
+            <nav class="navbar" role="navigation" aria-label="main navigation">
+                <div class="navbar-brand">
+                    <img src="https://jungle.krafton.com/resource/images/common/logo.svg" sizes="200%">
+                </div>
+        </div>
+    <div class = "box">
+        <div class="block">
+            <h3 class="title is-4 has-text-centered" >회원가입</label>
+          </div>
+        <form action="/register" method="POST">
+        <div class="block">
+            <div class="control has-icons-left">
+              <input class="input is-medium" id = "user_id" name = "user_id" type="id" style="width: 500px;" placeholder="아이디">
+              <span class="icon is-medium is-left">
+                <span class="mdi mdi-identifier"></span>
+              </span>
+            </div>
+        </div>
+
+        <div class="block">
+            <div class="control has-icons-left">    
+                <input class="input is-medium" id = "user_password" name = "user_password" type="password" style="width: 500px;" placeholder="비밀번호">
+                <span class="icon is-medium is-left">
+                    <span class="mdi mdi-onepassword"></span>
+                  </span>
+            </div>
+        </div>
+
+        <div class="block">
+            <div class="control has-icons-left">    
+                <input class="input is-medium" id = "user_checkpassword" name = "user_checkpassword" type="password" style="width: 500px;" placeholder="비밀번호 확인">
+                <span class="icon is-medium is-left">
+                    <span class="mdi mdi-onepassword"></span>
+                  </span>
+            </div>
+        </div>
+
+        <div class="block">
+            <div class="control has-icons-left">    
+                <input class="input is-medium" id = "user_nickname" name = "user_nickname" type="text" style="width: 500px;" placeholder="닉네임">
+                <span class="icon is-medium is-left">
+                    <span class="mdi mdi-alpha-n"></span>
+                  </span>
+            </div>
+        </div>
+        
+        <div class="block">
+            <div class="buttons is-right">
+                <button class="button is-success" type = "submit" >회원가입</button>
+            </div>
+        </div>
+    </form>
+    </div>
+</div>
+</div>
+</div>
+{% endblock %}
